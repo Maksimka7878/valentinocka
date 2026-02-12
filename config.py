@@ -12,8 +12,18 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 # OpenAI API key for poem generation (optional)
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
-# Database path
+# Database — Vercel Postgres
+POSTGRES_URL = os.getenv("POSTGRES_URL", "")
+
+# Legacy local SQLite fallback (for local dev without Postgres)
 DATABASE_PATH = os.getenv("DATABASE_PATH", "valentine_bot.db")
+
+# Webhook
+VERCEL_URL = os.getenv("VERCEL_URL", "")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
+
+# Cron secret (to protect cron endpoint)
+CRON_SECRET = os.getenv("CRON_SECRET", "")
 
 # ====== Prices in Telegram Stars ======
 # Base features
