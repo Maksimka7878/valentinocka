@@ -30,9 +30,19 @@ class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         """GET /api/cron — deliver scheduled valentines"""
-        # Verify cron secret (Vercel sets this header for cron jobs)
+        # Security check
         auth = self.headers.get("Authorization", "")
-        if config.CRON_SECRET and auth != f"Bearer {config.CRON_SECRET}":
+        user_agent = self.headers.get("User-Agent", "")
+        
+        # Allow if:
+        # 1. User-Agent contains vercel-cron (internal Vercel scheduler)
+        # 2. Authorization header matches CRON_SECRET
+        # 3. CRON_SECRET is not set (insecure mode)
+        is_vercel_cron = "vercel-cron" in (user_agent or "")
+        is_valid_token = config.CRON_SECRET and auth == f"Bearer {config.CRON_SECRET}"
+        is_insecure = not config.CRON_SECRET
+
+        if not (is_vercel_cron or is_valid_token or is_insecure):
             self.send_response(401)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
